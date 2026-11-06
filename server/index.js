@@ -1,6 +1,10 @@
 const express = require("express");
 const app = express();
 const mysql = require("mysql");
+const cors = require("cors");
+
+app.use(cors());
+app.use(express.json());
 
 const connection = mysql.createConnection({
   host: "localhost",
@@ -10,7 +14,22 @@ const connection = mysql.createConnection({
 });
 
 app.post("/create", (req, res) => {
-  // Aquí iremos agregando la lógica del registro en los siguientes pasos
+  const nombre = req.body.nombre;
+  const description = req.body.description;
+  const price = req.body.price;
+  const stock = req.body.stock;
+
+  connection.query(
+    "INSERT INTO products (nombre, description, price, stock) VALUES (?,?,?,?)",
+    [nombre, description, price, stock],
+    (err, resul) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.send("Product created successfully");
+      }
+    }
+  );
 });
 
 app.listen(3001, () => {
